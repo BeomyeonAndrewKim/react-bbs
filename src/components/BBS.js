@@ -2,10 +2,12 @@ import React, {Component} from 'react';
 import Login from './LoginScreen';
 import BBSList from './BBSList';
 import * as firebase from 'firebase';
+import AccountScreen from './AccountScreen'
+import Loading from './Loading'
 
 export default class BBS extends Component{
   state = {
-    page:'login'
+    page:'loading'
   }
   componentDidMount(){
     const config = {
@@ -21,7 +23,8 @@ export default class BBS extends Component{
       if (user) {
         this.setState((prevState)=>{
           return{
-            page:'BBSList'
+            page:'BBSList',
+            uid:user.uid
           }
         })
       } else {
@@ -33,14 +36,24 @@ export default class BBS extends Component{
       }
     });
   }
+  handleAccountScreen=()=>{
+    this.setState((prevState)=>{
+      return{
+        page:'AccountScreen'
+      }
+    })
+  }
   render(){
     return(
       <div>
-        {
-          this.state.page==='login'
-          ? <Login/>
+        { this.state.page==='loading'
+          ? <Loading/>
+          : this.state.page==='login'
+          ? <Login />
           : this.state.page==='BBSList'
-          ? <BBSList/>
+          ? <BBSList uid={this.state.uid} handleAccountScreen={this.handleAccountScreen}/>
+          : this.state.page==='AccountScreen'
+          ? <AccountScreen />
           : null
         }
       </div>
