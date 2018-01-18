@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import Login from './LoginScreen';
+import BBSList from './BBSList';
 import * as firebase from 'firebase';
 
 export default class BBS extends Component{
@@ -16,6 +17,21 @@ export default class BBS extends Component{
       messagingSenderId: "609470552804"
     };
     firebase.initializeApp(config);
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.setState((prevState)=>{
+          return{
+            page:'BBSList'
+          }
+        })
+      } else {
+        this.setState((prevState)=>{
+          return{
+            page:'login'
+          }
+        })
+      }
+    });
   }
   render(){
     return(
@@ -23,6 +39,8 @@ export default class BBS extends Component{
         {
           this.state.page==='login'
           ? <Login/>
+          : this.state.page==='BBSList'
+          ? <BBSList/>
           : null
         }
       </div>
