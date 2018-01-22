@@ -4,6 +4,7 @@ import BBSList from './BBSList';
 import * as firebase from 'firebase';
 import AccountScreen from './AccountScreen'
 import Loading from './Loading'
+import BBSContents from './BBSContents'
 
 export default class BBS extends Component{
   state = {
@@ -82,7 +83,6 @@ export default class BBS extends Component{
       for (const [uid,nickName] of pairArr){
         uidObj[uid]=nickName;
       }
-
       // for( const uid of uidArr){
       //   const nickNameSnapshot = await firebase.database().ref(`users/${uid}/nickName`).once('value');
       //   const nickName = nickNameSnapshot.val();
@@ -96,9 +96,25 @@ export default class BBS extends Component{
       });
     }
   }
+  viewArticle = async articleId =>{
+    const [articleSnapshot, contentSnapshot] = await Promise.all([
+      firebase.database().ref(`articles/${articleId}`).once('value'),
+      firebase.database().ref(`contents/${articleId}`).once('value')
+    ])
+    const article = articleSnapshot.val();
+    const content = contentSnapshot.val();
+    this.setState({
+      currentArticle:{
+        ...article,
+        content
+      },
+      page: 'BBSContents'
+    })
+  }
+
   render(){
     const nickName=this.state.nickName? this.state.nickName : this.state.uid
-    const{articles}=this.state;
+    const{articles, currentArticle}=this.state;
     // const {nickName , uid}=this.state;
     return(
       <div>
@@ -109,6 +125,7 @@ export default class BBS extends Component{
           : this.state.page==='BBSList'
           ? <BBSList
               nickName={nickName}
+              onArticleClick={this.viewArticle}
               handleAccountScreen={this.handleAccountScreen}
               articleArr={articles}
             />
@@ -117,6 +134,12 @@ export default class BBS extends Component{
             nickName={nickName}
             handleAccountScreen={this.handleAccountScreen}
             onNickNameSubmit={this.saveNickName}/>
+          : this.state.page==='BBSContents'
+          ? <BBSContents 
+          {...currentArticle}
+          nickName={nickName}
+          handleAccountScreen={this.handleAccountScreen}
+          />
           : null
         }
       </div>

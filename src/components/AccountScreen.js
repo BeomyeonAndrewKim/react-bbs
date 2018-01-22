@@ -14,7 +14,7 @@ export default class AccountScreen extends Component{
       <div>
         <NavBar nickName={nickName} handleAccountScreen={handleAccountScreen}/>
         <form onSubmit={this.handleSubmit}>
-          <input type="text" name="nickName" placeholder="Edit your Nickname"/>
+          <input type="text" name="nickName" defaultValue={nickName}/>
           <button type="submit">수정</button>
         </form>
       </div>
