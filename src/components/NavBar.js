@@ -40,7 +40,7 @@ export default class NavBar extends Component{
       <Wrap>
         <InnerLeft>BBS</InnerLeft>
         <LogoutBtn onClick={this.handleLogoutClick}>Sign Out</LogoutBtn>
-        <NickName href='#' onClick={this.handleNicknameClick}>{this.props.uid}</NickName>
+        <NickName href='#' onClick={this.handleNicknameClick}>{this.props.nickName}</NickName>
       </Wrap>
     )
   }

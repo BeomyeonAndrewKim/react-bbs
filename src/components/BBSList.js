@@ -3,10 +3,10 @@ import NavBar from './NavBar';
 
 export default class BBSList extends Component{
   render(){
-    const {uid, handleAccountScreen}=this.props;
+    const {nickName, handleAccountScreen}=this.props;
     return(
       <div>
-        <NavBar uid={uid} handleAccountScreen={handleAccountScreen}/>
+        <NavBar nickName={nickName} handleAccountScreen={handleAccountScreen}/>
         <h1>BBSList</h1>
       </div>
     )
