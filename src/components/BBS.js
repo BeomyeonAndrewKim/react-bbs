@@ -22,7 +22,6 @@ export default class BBS extends Component{
     firebase.auth().onAuthStateChanged(async user => {
       if (user) {
         const snapshot= await firebase.database().ref(`users/${user.uid}/nickName`).once('value');
-        
         this.setState((prevState)=>{
           return{
             page:'BBSList',
@@ -30,6 +29,7 @@ export default class BBS extends Component{
             nickName:snapshot.val()
           }
         })
+        this.fecthAricles();
       } else {
         this.setState((prevState)=>{
           return{
@@ -46,6 +46,7 @@ export default class BBS extends Component{
       }
     })
   }
+
   saveNickName = async nickName =>{
     const {uid} = this.state;
     await firebase.database().ref(`users/${uid}/nickName`).set(nickName);
@@ -54,8 +55,50 @@ export default class BBS extends Component{
       page:'BBSList'
     })
   }
+
+  fecthAricles = async ()=>{
+    const snapshot= await firebase.database().ref(`articles`).once('value');
+    const articlesObj=snapshot.val();
+    if(articlesObj == null){
+      this.setState({
+        articles: null
+      });
+    } else {
+      const articles = Object.entries(articlesObj).map(([articleId,articleItem])=>{
+        return{
+          ...articleItem,
+          articleId
+        }
+      })
+      const uidSet=new Set(articles.map(({uid})=> uid));
+      const uidObj={};
+
+      const ps = Array.from(uidSet).map(async uid=>{
+        const snapshot = await firebase.database().ref(`users/${uid}/nickName`).once('value');
+        const nickName= snapshot.val();
+        return [uid,nickName];
+      })
+      const pairArr = await Promise.all(ps);
+      for (const [uid,nickName] of pairArr){
+        uidObj[uid]=nickName;
+      }
+
+      // for( const uid of uidArr){
+      //   const nickNameSnapshot = await firebase.database().ref(`users/${uid}/nickName`).once('value');
+      //   const nickName = nickNameSnapshot.val();
+      //   uidObj[uid]=nickName;
+      // }
+      articles.forEach(article =>{
+        article.author=uidObj[article.uid];
+      })
+      this.setState({
+        articles
+      });
+    }
+  }
   render(){
     const nickName=this.state.nickName? this.state.nickName : this.state.uid
+    const{articles}=this.state;
     // const {nickName , uid}=this.state;
     return(
       <div>
@@ -64,7 +107,11 @@ export default class BBS extends Component{
           : this.state.page==='login'
           ? <Login />
           : this.state.page==='BBSList'
-          ? <BBSList nickName={nickName} handleAccountScreen={this.handleAccountScreen}/>
+          ? <BBSList
+              nickName={nickName}
+              handleAccountScreen={this.handleAccountScreen}
+              articleArr={articles}
+            />
           : this.state.page==='AccountScreen'
           ? <AccountScreen
             nickName={nickName}

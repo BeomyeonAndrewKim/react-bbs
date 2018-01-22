@@ -4,35 +4,14 @@ import styled from 'styled-components';
 
 import NavBar from './NavBar';
 
-const mockDate=[
-  {
-    articleID:'-LB1',
-    author:'andrew',
-    title: '게시글 제목 1',
-    createdAt: '2018-01-20'
-  },
-  {
-    articleID:'0d21',
-    author:'andrew',
-    title:'게시글 제목 2',
-    createdAt: '2018-01-12'
-  }
-]
-  
-const ArticleItemRow = styled(Table.Row)`
-  &:hover{
-    cursor:pointer;
-    background-color:#d5b6ef;
-  }
-`
 
 export default class BBSList extends Component{
   render(){
-    const {nickName, handleAccountScreen}=this.props;
+    const {nickName, handleAccountScreen, articleArr}=this.props;
     return(
       <div>
         <NavBar nickName={nickName} handleAccountScreen={handleAccountScreen}/>
-        <Table celled>
+        <Table>
           <Table.Header>
             <Table.Row>
               <Table.HeaderCell>작성자</Table.HeaderCell>
@@ -42,13 +21,15 @@ export default class BBSList extends Component{
           </Table.Header>
           <Table.Body>
             {
-              mockDate.map(({articleID, title ,author, createdAt})=>(
-                <ArticleItemRow key={articleID}>
+              Array.isArray(articleArr) && articleArr.length > 0 ?
+              articleArr.map(({articleId, title ,author, createdAt})=>(
+                <Table.Row key={articleId}>
                   <Table.Cell>{author}</Table.Cell>
                   <Table.Cell>{title}</Table.Cell>
                   <Table.Cell>{createdAt}</Table.Cell>
-                </ArticleItemRow>
+                </Table.Row>
               ))
+              : '게시글이 없습니다'
             }
           </Table.Body>
         </Table>
