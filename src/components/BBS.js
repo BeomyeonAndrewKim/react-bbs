@@ -5,6 +5,7 @@ import * as firebase from 'firebase';
 import AccountScreen from './AccountScreen'
 import Loading from './Loading'
 import BBSContents from './BBSContents'
+import NewArticleScreen from './NewArticleScreen';
 
 export default class BBS extends Component{
   state = {
@@ -112,6 +113,23 @@ export default class BBS extends Component{
     })
   }
 
+  pageToNewArticle = () =>{
+    this.setState({
+      page:'new-article'
+    })
+  }
+
+  saveArticle= async article =>{
+    const p1 = firebase.database().ref('articles').push({
+      createdAt: firebase.database.ServerValue.TIMESTAMP,
+      title: article.title,
+      uid: this.state.uid
+    })
+    const p2=firebase.database().ref(`contents/${p1.key}`).set(article.content);
+    await Promise.all([p1,p2]);
+    this.viewArticle(p1.key);
+  }
+
   render(){
     const nickName=this.state.nickName? this.state.nickName : this.state.uid
     const{articles, currentArticle}=this.state;
@@ -128,6 +146,7 @@ export default class BBS extends Component{
               onArticleClick={this.viewArticle}
               handleAccountScreen={this.handleAccountScreen}
               articleArr={articles}
+              onNewArticleClick={this.pageToNewArticle}
             />
           : this.state.page==='AccountScreen'
           ? <AccountScreen
@@ -140,6 +159,12 @@ export default class BBS extends Component{
           nickName={nickName}
           handleAccountScreen={this.handleAccountScreen}
           />
+          : this.state.page==='new-article'
+          ?<NewArticleScreen
+            onFormSubmit={this.saveArticle}
+            nickName={nickName}
+            handleAccountScreen={this.handleAccountScreen}
+            />
           : null
         }
       </div>

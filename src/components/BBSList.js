@@ -14,16 +14,24 @@ const ArticleItemRow = styled(Table.Row)`
 `;
 
 export default class BBSList extends Component{
+  
+  handleNewArticleClick = e =>{
+    this.props.onNewArticleClick();
+  }
+
   render(){
+
     const {
       nickName,
       handleAccountScreen,
       articleArr,
       onArticleClick
     }=this.props;
+
     return(
       <div>
         <NavBar nickName={nickName} handleAccountScreen={handleAccountScreen}/>
+        <button onClick={this.handleNewArticleClick}>새 글</button>
         <Table>
           <Table.Header>
             <Table.Row>
