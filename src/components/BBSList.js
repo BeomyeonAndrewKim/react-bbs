@@ -18,6 +18,9 @@ export default class BBSList extends Component{
   handleNewArticleClick = e =>{
     this.props.onNewArticleClick();
   }
+  handleCalendar= e=>{
+    this.props.onCalendar();
+  }
 
   render(){
 
@@ -54,6 +57,7 @@ export default class BBSList extends Component{
             }
           </Table.Body>
         </Table>
+        <button onClick={this.handleCalendar}>캘린더</button>
       </div>
     )
   }

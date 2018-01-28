@@ -6,6 +6,7 @@ import AccountScreen from './AccountScreen'
 import Loading from './Loading'
 import BBSContents from './BBSContents'
 import NewArticleScreen from './NewArticleScreen';
+import CalendarScreen from './CalendarScreen';
 
 export default class BBS extends Component{
   state = {
@@ -23,6 +24,7 @@ export default class BBS extends Component{
     firebase.initializeApp(config);
     firebase.auth().onAuthStateChanged(async user => {
       if (user) {
+        console.log(user);
         const snapshot= await firebase.database().ref(`users/${user.uid}/nickName`).once('value');
         this.setState((prevState)=>{
           return{
@@ -129,7 +131,12 @@ export default class BBS extends Component{
     await Promise.all([p1,p2]);
     this.viewArticle(p1.key);
   }
-
+  
+  pageToCalendar= () =>{
+    this.setState({
+      page:'Calendar'
+    })
+  }
   render(){
     const nickName=this.state.nickName? this.state.nickName : this.state.uid
     const{articles, currentArticle}=this.state;
@@ -147,6 +154,7 @@ export default class BBS extends Component{
               handleAccountScreen={this.handleAccountScreen}
               articleArr={articles}
               onNewArticleClick={this.pageToNewArticle}
+              onCalendar={this.pageToCalendar}
             />
           : this.state.page==='AccountScreen'
           ? <AccountScreen
@@ -165,6 +173,10 @@ export default class BBS extends Component{
             nickName={nickName}
             handleAccountScreen={this.handleAccountScreen}
             />
+          : this.state.page==='Calendar'
+          ? <CalendarScreen
+           articles={articles}
+           nowUid={this.state.uid}/>
           : null
         }
       </div>
