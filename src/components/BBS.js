@@ -176,7 +176,8 @@ export default class BBS extends Component{
           : this.state.page==='Calendar'
           ? <CalendarScreen
            articles={articles}
-           nowUid={this.state.uid}/>
+           nowUid={this.state.uid}
+           articleId={this.state.articleId}/>
           : null
         }
       </div>
